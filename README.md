@@ -1,6 +1,7 @@
 # Game-using-C
 
 TODO:
+Make profect to C
 Remove unnecesarry files
 Refract code
 Add Cmake for compatabillity
