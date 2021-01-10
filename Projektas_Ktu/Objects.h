@@ -13,7 +13,6 @@ typedef struct
 	int lives;
 	int score;
 	float speed;
-
 }Player;
 
 typedef struct 
@@ -24,7 +23,6 @@ typedef struct
 	bool live;
 	float speed;
 	int radius;
-
 }Bullet;
 
 typedef struct 

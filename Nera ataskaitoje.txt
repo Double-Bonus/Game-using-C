@@ -1,2 +1,0 @@
-nuo
-void updateBullet(Bullet bullet[], int size, Player *player) imtinai

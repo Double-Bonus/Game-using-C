@@ -1,6 +1,3 @@
-﻿  pch.cpp
-  Objects.cpp
-  Projektas_Ktu.cpp
-  Generating Code...
-D:\Backup\Desktop\I\Programavimas\Project_A\Projektas_Ktu\Projektas_Ktu\Projektas_Ktu.cpp(664,16): warning C4477: 'fscanf' : format string '%d' requires an argument of type 'int *', but variadic argument 1 has type 'bool *'
-  Projektas_Ktu.vcxproj -> D:\Backup\Desktop\I\Programavimas\Project_A\Projektas_Ktu\Debug\Projektas_Ktu.exe
+﻿  Projektas_Ktu.cpp
+C:\Users\Zygis\Desktop\Programavimas\Game-using-C\Projektas_Ktu\Projektas_Ktu.cpp(556,16): warning C4477: 'fscanf' : format string '%d' requires an argument of type 'int *', but variadic argument 1 has type 'bool *'
+  Projektas_Ktu.vcxproj -> C:\Users\Zygis\Desktop\Programavimas\Game-using-C\Debug\Projektas_Ktu.exe

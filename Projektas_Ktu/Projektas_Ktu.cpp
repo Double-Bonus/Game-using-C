@@ -15,9 +15,9 @@
 #include <allegro5/allegro_acodec.h>
 #include "objects.h"
 
-#define width 1600  //Taip daroma, kad negalima butu  toliau pakeisti situ verciu
-#define height 900  //Panasiai kaip su const int
-#define sizeEnem 10	//Priesu masyvo max dydis
+#define WIDTH 1600  //Taip daroma, kad negalima butu  toliau pakeisti situ verciu
+#define HEIGHT 900  //Panasiai kaip su const int
+#define sizeEnem 10	//Priesu masyvo max dydis			USE UPPER CASE!!!!!!!!!!!!!!
 
 //Funkciju prototipai
 void initPlayer(Player* player);
@@ -42,6 +42,7 @@ void initHighscore(int A[]);
 void moveEnemy(Enemy enemy[], int sizeEnemy);
 void drawHighScore(int A[], ALLEGRO_FONT* font);
 void drawButtons(ALLEGRO_FONT* font, ALLEGRO_BITMAP* buttn[]);
+void drawInstructionsText(ALLEGRO_FONT* font);
 
 //Globalus kintamieji
 
@@ -72,15 +73,11 @@ int main()
 		return -1;
 	}
 
-	display = al_create_display(width, height); //Sukuriamas ekranas
-
-	if (!display)   //Patikrina ar susikure ekrano vaizdas(display), jei ne isjungia
-	{
+	display = al_create_display(WIDTH, HEIGHT); //Sukuriamas ekranas
+	if (!display){
 		al_show_native_message_box(NULL, NULL, "Error", "Falied to initialize the display", NULL, NULL);
 		return -1;
 	}
-
-
 
 	Player player; //Sukuria Player struktura pavadinimu player is objects.h
 	Bullet bullet[NUM_BULLETS]; //Tas pats kas su player tik cia Bullet strukturos bullet masyvas kurio dydis yra NUM_BULLETS
@@ -119,8 +116,6 @@ int main()
 	al_reserve_samples(5);
 
 
-
-
 	sample = al_load_sample("Tema.ogg");
 	judesys = al_load_sample("JUDESYS.ogg");
 	muzika = al_load_sample("Piratai.ogg");
@@ -146,7 +141,7 @@ int main()
 
 
 	const int CBt = 9;
-	ALLEGRO_BITMAP* buttons[CBt];	
+	ALLEGRO_BITMAP* buttons[CBt];	//THIS IS BS !!!!!!!!!!! USE STRUCT
 	buttons[0] = al_load_bitmap("buttonUP_50x50.png");
 	buttons[1] = al_load_bitmap("buttonDOWN_50x50.png");
 	buttons[2] = al_load_bitmap("buttonRIGHT_50x50.png");
@@ -182,14 +177,12 @@ int main()
 
 			if (al_key_down(&keystate, ALLEGRO_KEY_ENTER))
 			{
-
 				switch (arowY)
 				{
 				case 350:
 					al_play_sample(muzika, 1, 0, 1, ALLEGRO_PLAYMODE_LOOP, NULL);
 					mainMeniu = false;
 					break;
-
 				case 450:
 					optionsBool = true;
 					redrawOptions = true;
@@ -198,77 +191,52 @@ int main()
 						ALLEGRO_EVENT event;
 						al_wait_for_event(event_queue, &event);
 						al_get_keyboard_state(&keystate);
-
-						if (al_key_down(&keystate, ALLEGRO_KEY_Q))
-						{
+						if (al_key_down(&keystate, ALLEGRO_KEY_Q)) {
 							optionsBool = false;
 							arowY = 350;
 						}
-
-
 						redrawOptions = true;
-
 						if (redrawOptions && al_is_event_queue_empty(event_queue)) {
 							redrawOptions = false;
-
 							drawButtons(font, buttons);
-
-
 							al_flip_display();
 							al_clear_to_color(al_map_rgb(0, 0, 0));
 						}
-
-
 					}
 					break;
-
 				case 550:
 					highscoreBool = true;
 					redrawHigh = true;
-
-					while (highscoreBool)
-					{
+					while (highscoreBool) {
 						ALLEGRO_EVENT event;
 						al_wait_for_event(event_queue, &event);
 						al_get_keyboard_state(&keystate);
-
-						if (al_key_down(&keystate, ALLEGRO_KEY_Q))
-						{
+						if (al_key_down(&keystate, ALLEGRO_KEY_Q)) {
 							highscoreBool = false;
 							arowY = 350;
 						}
-
 						redrawHigh = true;
-
-						if (redrawHigh && al_is_event_queue_empty(event_queue)) {
+						if (redrawHigh && al_is_event_queue_empty(event_queue)) {  // kam juos piesti kiekviena karta!!!!!!!!!!!!!!!!!!!
 							redrawHigh = false;
 							drawHighScore(records, font);
 							al_flip_display();
 							al_clear_to_color(al_map_rgb(0, 0, 0));
-
 						}
 					}
-
 					break;
-
 				case 650:
 					dudeBool = true;
 					redrawDude = true;
-
 					while (dudeBool)
 					{
 						ALLEGRO_EVENT event;
 						al_wait_for_event(event_queue, &event);
 						al_get_keyboard_state(&keystate);
-
-						if (al_key_down(&keystate, ALLEGRO_KEY_Q))
-						{
+						if (al_key_down(&keystate, ALLEGRO_KEY_Q)) {
 							dudeBool = false;
 							arowY = 350;
 						}
-
 						redrawDude = true;
-
 						//Cia galima taisyti butu
 						if (redrawDude && al_is_event_queue_empty(event_queue)) {
 							redrawDude = false;
@@ -287,91 +255,55 @@ int main()
 							arowY += 400;
 							al_rest(0.2);
 						}
-
 						if (al_key_down(&keystate, ALLEGRO_KEY_UP)) {
 							arowY -= 400;
 							al_rest(0.2);
 						}
-						if (al_key_down(&keystate, ALLEGRO_KEY_ENTER))
-						{
-
+						if (al_key_down(&keystate, ALLEGRO_KEY_ENTER)) {
 							switch (arowY)
 							{
 							case 250:
-
 								character = al_load_bitmap("bicas60x60.png");
 								muzika = al_load_sample("Piratai.ogg");
-
 								break;
-
 							case 650:
-
 								character = al_load_bitmap("bicas_2_60x60.png");
 								muzika = al_load_sample("Misija.ogg");
 								break;
-
 							}
-
-
 						}
-
-
 					}
-
 					break;
-
-
 				case 750:
 					instructionBool = true;
 					redrawInstruction = true;
-
 					while (instructionBool)
 					{
 						ALLEGRO_EVENT event;
 						al_wait_for_event(event_queue, &event);
 						al_get_keyboard_state(&keystate);
 
-						if (al_key_down(&keystate, ALLEGRO_KEY_Q))
-						{
+						if (al_key_down(&keystate, ALLEGRO_KEY_Q)) {
 							instructionBool = false;
 							arowY = 350;
 						}
-
 						redrawInstruction = true;
 
 						if (redrawInstruction && al_is_event_queue_empty(event_queue)) {
 							redrawInstruction = false;
-							al_draw_textf(font, al_map_rgb(0, 191, 255), 300, 300, 0, "Shoot the target");
-							al_draw_textf(font, al_map_rgb(0, 191, 255), 300, 350, 0, "Try to hit as many enemies as you can");
-							al_draw_textf(font, al_map_rgb(0, 191, 255), 300, 400, 0, "Avoid enemy bullets");
-							al_draw_textf(font, al_map_rgb(0, 191, 255), 300, 450, 0, "Complete all levels as possible faster");
-
-							al_draw_textf(font, al_map_rgb(0, 0, 255), 900, 200, 0, " Bullet count is written in bottom left corner");
-							al_draw_textf(font, al_map_rgb(0, 0, 255), 900, 250, 0, "Your score is written in bottom at middle");
-							al_draw_textf(font, al_map_rgb(0, 0, 255), 900, 300, 0, "Timer is written in Top left corner");
-
-
-
+							drawInstructionsText(font);
 							al_draw_bitmap(character_2, 900, 400, 0);
 							al_draw_bitmap(target, 1300, 400, 0);
 							int i;
-							for (i = 970; i <= 1270; i += 30)
-							{
+							for (i = 970; i <= 1270; i += 30) {
 								al_draw_filled_circle(i, 420, 2, al_map_rgb(255, 0, 0));
 							}
-
 							al_flip_display();
 							al_clear_to_color(al_map_rgb(0, 0, 0));
-
 						}
-
 					}
-
 					break;
 				}
-
-
-
 			}
 
 			//Cia taip pat su universale rodykles funkcija galima
@@ -391,9 +323,7 @@ int main()
 			else if (event.type == ALLEGRO_EVENT_DISPLAY_CLOSE)
 				done = true, mainMeniu = false;
 
-
 			redraw = true;
-
 			if (redraw && al_is_event_queue_empty(event_queue)) {
 				redraw = false;
 				al_draw_textf(font, al_map_rgb(0, 255, 0), 500, 350, 0, "Pres enter to start a game");
@@ -406,16 +336,11 @@ int main()
 				al_flip_display();
 				al_clear_to_color(al_map_rgb(0, 0, 0));
 			}
-
-		}
-
+		} // MAIN MENIU
 
 
 		al_stop_sample(&vaflis);
 		//sample = al_load_sample("Tema.ogg");
-
-
-
 
 		if (al_key_down(&keystate, ALLEGRO_KEY_ESCAPE))     
 			done = true;
@@ -423,13 +348,10 @@ int main()
 		else if (event.type == ALLEGRO_EVENT_DISPLAY_CLOSE)
 			done = true;
 
-
-		else if (event.type == ALLEGRO_EVENT_TIMER)
-		{
+		else if (event.type == ALLEGRO_EVENT_TIMER) {
 			updateBullet(bullet, NUM_BULLETS, &player);
 			updateBullet(enemBullet, NUM_BULLETS_ENEMY1, &player);
 			delayReload(&reloadBool);
-
 
 			if (player.score >= 150 && player.score <= 900 && NUM_ENEMY != 5) {
 				NUM_ENEMY = 5;
@@ -445,7 +367,7 @@ int main()
 
 			updateEnemy(enemy, NUM_ENEMY, bullet, NUM_BULLETS, &player); //Updatina kai nieko nepaspausta
 
-
+			// move all 4 fubtions to updateMovement
 			if (al_key_down(&keystate, ALLEGRO_KEY_UP))
 				moveUp(&player);
 
@@ -463,8 +385,7 @@ int main()
 				fireBullet(bullet, NUM_BULLETS, &player);
 			}
 
-			if (al_key_down(&keystate, ALLEGRO_KEY_R))
-			{
+			if (al_key_down(&keystate, ALLEGRO_KEY_R)) {
 				reloadBool = true;
 			}
 
@@ -475,18 +396,17 @@ int main()
 			updateEnemy(enemy, NUM_ENEMY, bullet, NUM_BULLETS, &player); //Updatina kai kazkas paspausta
 
 			//Kad vaiksciotu ratu (pasiekus ekrano ribas)
-			if (player.x > width + al_get_bitmap_width(character))
+			if (player.x > WIDTH + al_get_bitmap_width(character))
 				player.x = -al_get_bitmap_width(character);
 
 			if (player.x < -al_get_bitmap_width(character))
-				player.x = width + al_get_bitmap_width(character);
+				player.x = WIDTH + al_get_bitmap_width(character);
 
-			if (player.y > height + al_get_bitmap_height(character))
+			if (player.y > HEIGHT + al_get_bitmap_height(character))
 				player.y = -al_get_bitmap_height(character);
 
 			if (player.y < -al_get_bitmap_height(character))
-				player.y = height + al_get_bitmap_height(character);
-
+				player.y = HEIGHT + al_get_bitmap_height(character);
 
 			//Treciam lygyje pradeda judeti priesai
 			if (NUM_ENEMY == 7)
@@ -496,21 +416,16 @@ int main()
 			if (NUM_ENEMY > 4)
 				fireEnemyBullet(enemBullet, NUM_BULLETS_ENEMY1, enemy, NUM_ENEMY);
 
-
-
 		}
-
 
 
 		if (draw && al_is_event_queue_empty(event_queue))
 		{
 			draw = false;
-
 			al_draw_bitmap(character, player.x, player.y, 0);
 			drawEnemy(enemy, NUM_ENEMY, target);
 
-			if (NUM_ENEMY > 4)
-			{
+			if (NUM_ENEMY > 4) {
 				drawBullet(enemBullet, NUM_BULLETS_ENEMY1);
 			}
 
@@ -525,23 +440,19 @@ int main()
 			if (reloadBool)		//Kai uzsitaisoma
 				al_draw_textf(font, al_map_rgb(0, 255, 0), 10, 850, 0, "RELOADING");
 
-
 			timeCount--;
 
 			al_draw_textf(font, al_map_rgb(255, 0, 255), 400, 50, 0, "Time left: %d", (timeCount / 60 + 1)); //bandom
 
 			if (timeCount == 0 || player.lives < 1 || player.score == 2300) {
 				writeHighScore(&player);
-
-
 				NUM_ENEMY = 3;
 				initBullet(bullet, NUM_BULLETS);
 				initEnemy(enemy_tut, enemy);
 				initEnemyBullet(enemBullet, NUM_BULLETS_ENEMY1, 4);
 
 				int i;
-				for (i = 3; i < sizeEnem; i++)
-				{
+				for (i = 3; i < sizeEnem; i++) {
 					enemy[i].x = 8000;
 					enemy[i].y = 8000;
 					enemy[i].lives = 0;
@@ -552,8 +463,7 @@ int main()
 					enemy[i].dir = 0;
 				}
 
-				while (!playAgain)
-				{
+				while (!playAgain) {
 					ALLEGRO_EVENT event;
 					al_wait_for_event(event_queue, &event);
 					al_get_keyboard_state(&keystate);
@@ -565,11 +475,9 @@ int main()
 						target = al_load_bitmap("target_50x50.png");
 						initPlayer(&player);
 					}
-
 					if (al_key_down(&keystate, ALLEGRO_KEY_ESCAPE)) {
 						playAgain = true;
 						done = true;
-
 					}
 
 					//Gal bool reikia redraw???
@@ -582,28 +490,17 @@ int main()
 						al_flip_display();
 						al_clear_to_color(al_map_rgb(0, 0, 0));
 					}
-
-
-
 				}
 
 			}
 			playAgain = false;
 
-
-
-
-
-
 			al_flip_display();
 			al_clear_to_color(al_map_rgb(255, 255, 255));
 
 
-
-
-
 		}
-	}
+	} // while(!done)
 
 	al_destroy_sample(sample);
 	al_destroy_sample_instance(instance1);
@@ -625,16 +522,12 @@ int main()
 		al_destroy_bitmap(buttons[i]);
 
 
-
-
 	return 0;
 }
 
 //Funkcija nustatyti zaidejo parametrus
 void initPlayer(Player* player)
 {
-	//foo->bar is equivalent to(*foo).bar, i.e.it gets the member called bar from the struct that foo points to.
-
 	player->x = 10;
 	player->y = 10;
 	player->ID = PLAYER;
@@ -647,16 +540,14 @@ void initPlayer(Player* player)
 //Naudojama keleta kartu keiciantis lygiams
 void initEnemy(const char* file_name, Enemy enemy[])			//NENAUDOJAMAS INT SIZE!!!!!!!!!!!!!!!!!!!!!!!!!
 {
-	//Atidarom txt faila
+	int i = 0;
+	int count_enem;		//Priesu skaicius //NAME!!!!!!!!!!!11
 	FILE* file = fopen(file_name, "r");
 
-	int count_enem;		//Priesu skaicius
 	fscanf(file, "%d", &count_enem);
-	int i = 0;
 
 	//Uzpildomos reiksmes
-	for (i; i < count_enem; i++)
-	{
+	for (i; i < count_enem; i++) {
 		fscanf(file, "%d", &enemy[i].x);
 		fscanf(file, "%d", &enemy[i].y);
 		fscanf(file, "%d", &enemy[i].lives);
@@ -666,7 +557,6 @@ void initEnemy(const char* file_name, Enemy enemy[])			//NENAUDOJAMAS INT SIZE!!
 		fscanf(file, "%d", &enemy[i].sizeY);
 		fscanf(file, "%d", &enemy[i].dir);
 	}
-
 	fclose(file);
 }
 
@@ -715,7 +605,6 @@ void initEnemyBullet(Bullet bullet[], int size, int radius)
 		bullet[i].live = false;	//Ar reikia piesti ekrane kulka
 		bullet[i].radius = radius;
 	}
-
 }
 
 void drawBullet(Bullet bullet[], int size)
@@ -731,7 +620,8 @@ void drawBullet(Bullet bullet[], int size)
 	}
 }
 
-void drawEnemy(Enemy enemy[], int size, ALLEGRO_BITMAP* picture) {
+void drawEnemy(Enemy enemy[], int size, ALLEGRO_BITMAP* picture) 
+{
 	int i;
 	for (i = 0; i < size; i++)
 	{
@@ -743,29 +633,26 @@ void drawEnemy(Enemy enemy[], int size, ALLEGRO_BITMAP* picture) {
 }
 
 //Atnaujina priesu informacija
-void updateEnemy(Enemy enemy[], int size, Bullet bullet[], int bulletSize, Player* player) {
+void updateEnemy(Enemy enemy[], int size, Bullet bullet[], int bulletSize, Player* player) 
+{
 	int i, j;
 	for (i = 0; i < size; i++)
 	{
 		for (j = 0; j < bulletSize; j++)
 		{
 			//Ziurima ar kulkos kordinate yra tarp prieso uzimamos zonos ar jis yra gyvas
-			if (bullet[j].x > enemy[i].x && bullet[j].x < (enemy[i].x + 10) && bullet[j].y > enemy[i].y && bullet[j].y < (enemy[i].y + enemy[i].sizeY) && enemy[i].alive)
-			{
+			if (bullet[j].x > enemy[i].x && bullet[j].x < (enemy[i].x + 10) && bullet[j].y > enemy[i].y && bullet[j].y < (enemy[i].y + enemy[i].sizeY) && enemy[i].alive) {
 				enemy[i].lives--;
 				player->score++;	//Kai pataikoma padidinimas rezultatas
 				bullet[j].live = false;
 				bullet[j].x = 0;
 				bullet[j].y = 0;
 			}
-
 		}
 
 		//Kai riesas nebeturi gyvybiu bool alive pakeistas i false kad kita funkcija jo nebepiestu
-		if (enemy[i].lives <= 0)
-		{
+		if (enemy[i].lives <= 0) {
 			enemy[i].alive = false;
-
 		}
 	}
 }
@@ -788,15 +675,13 @@ void fireBullet(Bullet bullet[], int size, Player* player)
 }
 
 
-void fireEnemyBullet(Bullet bullet[], int size, Enemy enemy[], int sizeEnemy) {
-
+void fireEnemyBullet(Bullet bullet[], int size, Enemy enemy[], int sizeEnemy) 
+{
 	int i, j;
 	for (i = 0; i < size; i++)
 	{
 		if (!bullet[i].live) {
-
-			for (j = 0; j < sizeEnemy; j++)
-			{
+			for (j = 0; j < sizeEnemy; j++) {
 				if (rand() % 5000 == 0 && enemy[j].alive)	//Atsitiktinai saudo
 				{
 					bullet[i].live = true;
@@ -807,79 +692,59 @@ void fireEnemyBullet(Bullet bullet[], int size, Enemy enemy[], int sizeEnemy) {
 					else {
 						bullet[i].y = enemy[j].y + 35; //Kitam lygiui kad atrodytu lyg is sautuvo saudo
 					}
-
 					break;
 				}
-
 			}
 		}
 	}
-
 }
 
 
 void updateBullet(Bullet bullet[], int size, Player* player)
 {
 	int i = 0;
-	for (i; i < size; i++)
-	{
-		if (bullet[i].live)
-		{
+	for (i; i < size; i++) {
+		if (bullet[i].live) {
 			//Kad tiktu viena funkcija tiek zaidejo tiek prieso kulkoms naudojamas ID jas atskirti
 			if (bullet[i].ID == 1)
 				bullet[i].x += bullet[i].speed;
 
 			else if (bullet[i].ID == 2) {
 				bullet[i].x -= bullet[i].speed;
-
 				if ((bullet[i].x > player->x && bullet[i].x < player->x + 60) && (bullet[i].y > player->y && bullet[i].y < player->y + 60))         //Kai pataikoma i zaideja atimamos gyvybes ir  paleidziama muzika
 				{
 					player->lives--;
 					al_play_sample_instance(instance1);
 					bullet[i].live = false;
-
 				}
-
 			}
-
-			if (bullet[i].x > width || bullet[i].x < 0)   //Kai kulka iseina uz ekrano ribu yra sunaikinama
+			if (bullet[i].x > WIDTH || bullet[i].x < 0)   //Kai kulka iseina uz ekrano ribu yra sunaikinama
 			{
 				bullet[i].live = false;
 			}
-
 		}
-
 	}
 }
 
-void writeHighScore(Player* player) {
-
+void writeHighScore(Player* player) 
+{
 	//Atidarom faila
 	FILE* failas = fopen("high.txt", "r");
-
-	//ziurim ar ji egsistuoja, jei ne exitina
-	if (failas == NULL)
-	{
+	if (failas == NULL) {
 		printf("Error opening file!\n");
-		exit(1);
+		exit(1);  //KODEL ISVOSO EXITINIMA REIK SUKURTI NAUJA FAILAS TSG
 	}
 
 	// sukuriam  penkiu nariu rezultatu masyva
-	int results[5], i;
-
-	//I masyva sudedam narius
-	for (i = 0; i < 5; i++)
-	{
+	int results[5], i;  //MAGIC NUMBER!!!!!!!!!!111
+	for (i = 0; i < 5; i++) {
 		fscanf(failas, "%d", &results[i]);
 	}
-
 
 	//Ziurima ar esamas rezultatas didesnis uz paskutini buvusi, jei taip tada naujas rezultatas rasomas i 5 masyvo vieta
 	if (player->score > results[4]) {
 		results[4] = player->score;
-
 	}
-
 
 	//Surikiavimas
 	for (i = 4; i > 0; i--)
@@ -888,117 +753,91 @@ void writeHighScore(Player* player) {
 			int a = results[i - 1];
 			results[i - 1] = results[i];
 			results[i] = a;
-
 		}
-
 	}
-
-	//uzdarom faila
 	fclose(failas);
-
 
 	//Atidarome rasymui (Taip yra istrinami visi buve elementai)
 	failas = fopen("high.txt", "w");
-
-	if (failas == NULL)
-	{
+	if (failas == NULL) {
 		printf("Error opening file!\n");
 		exit(1);
 	}
-
-	//Surasomi i faila elementai
-	for (i = 0; i < 5; i++)
-	{
+	for (i = 0; i < 5; i++) {
 		fprintf(failas, "%d\n", results[i]);
 	}
-
 	fclose(failas);
-
 }
 
-void delayReload(bool* reload) {
+void delayReload(bool* reload) 
+{
 	if (*reload) {
-		reloadTime--;
-
+		reloadTime--;  //GLOBAL?????????????
 		if (reloadTime == 0) {
 			*reload = false;
 			bulletCount = NUM_BULLETS;
 			reloadTime = 60;
 		}
-
 	}
 }
 
-void drawPowerUp(int time, bool notUsed, ALLEGRO_BITMAP* picture) {
-	if (time < 8000 && notUsed)
-	{
+void drawPowerUp(int time, bool notUsed, ALLEGRO_BITMAP* picture) 
+{
+	if (time < 8000 && notUsed) {
 		al_draw_bitmap(picture, 500, 500, 0);
 	}
-
-
 }
 
-void updatePowerUp(Player* player, bool* notUsed) {
-
+void updatePowerUp(Player* player, bool* notUsed) 
+{
 	//if (player->x==500 && player->y ==500)
 	if ( (player->x > 500 && player->x < 525) && notUsed && (player->y > 450 && player->y < 550) ) {
-
 		*notUsed = false;
 		player->lives += 15;
 	}
-
 }
 
-
-void initHighscore(int A[]) {
-	//Atidarom faila
+void initHighscore(int A[]) 
+{
+	int i; 
 	FILE* failas = fopen("high.txt", "r");
-
-	//Ziurime ar jis egsistuoja, jei ne iseinama is programos
-	if (failas == NULL)
-	{
+	if (failas == NULL){
 		printf("Error opening file!\n");
 		exit(1);
 	}
 
-	int i;
-
-	//I masyva sudedam narius
-	for (i = 0; i < 5; i++)
+	for (i = 0; i < 5; i++) //MAGIC NUMBERS!!!!!!!!
 	{
 		fscanf(failas, "%d", &A[i]);
 	}
-
 	fclose(failas);
-
 }
 
 
-void drawHighScore(int A[], ALLEGRO_FONT* font) {
+void drawHighScore(int A[], ALLEGRO_FONT* font) 
+{
 	int aukstis = 100;
-	for (int i = 0; i < 5; i++)
-	{
+	for (int i = 0; i < 5; i++) {
 		al_draw_textf(font, al_map_rgb(0, 0, 255), 700, aukstis, 0, "%d.  %d", i + 1, A[i]);
 		aukstis += 100;
 	}
 }
 
-
-void moveEnemy(Enemy enemy[], int sizeEnemy) {
+void moveEnemy(Enemy enemy[], int sizeEnemy) 
+{
 	int i;
-
 	for (i = 0; i < sizeEnemy; i++)
 	{
-		if (enemy[i].y <= 0 || enemy[i].y >= height - 60 || (rand() % 1000 == 0)) {
+		if (enemy[i].y <= 0 || enemy[i].y >= HEIGHT - 60 || (rand() % 1000 == 0)) {
 			enemy[i].dir = enemy[i].dir * (-1);
 		}
 		enemy[i].y += (enemy[i].dir * enemy[i].speed);
-
 	}
 }
 
 //TODO Removve magic numbers
-void drawButtons(ALLEGRO_FONT *font, ALLEGRO_BITMAP *buttn[]) {
+void drawButtons(ALLEGRO_FONT *font, ALLEGRO_BITMAP *buttn[]) 
+{
 	al_draw_textf(font, al_map_rgb(255, 255, 255), 500, 50, 0, "Controls");
 	al_draw_textf(font, al_map_rgb(0, 191, 255), 500, 100, 0, "Move up ");
 	al_draw_bitmap(buttn[0], 900, 100, 0);
@@ -1023,5 +862,16 @@ void drawButtons(ALLEGRO_FONT *font, ALLEGRO_BITMAP *buttn[]) {
 
 	al_draw_textf(font, al_map_rgb(0, 128, 0), 500, 600, 0, "Quit the game ");
 	al_draw_bitmap(buttn[7], 900, 600, 0);
+}
 
+//REDO THIS FUNCTION1!!!!!!!!!!!1
+void drawInstructionsText(ALLEGRO_FONT* font)
+{
+	al_draw_textf(font, al_map_rgb(0, 191, 255), 300, 300, 0, "Shoot the target");
+	al_draw_textf(font, al_map_rgb(0, 191, 255), 300, 350, 0, "Try to hit as many enemies as you can");
+	al_draw_textf(font, al_map_rgb(0, 191, 255), 300, 400, 0, "Avoid enemy bullets");
+	al_draw_textf(font, al_map_rgb(0, 191, 255), 300, 450, 0, "Complete all levels as possible faster");
+	al_draw_textf(font, al_map_rgb(0, 0, 255), 900, 200, 0, " Bullet count is written in bottom left corner");
+	al_draw_textf(font, al_map_rgb(0, 0, 255), 900, 250, 0, "Your score is written in bottom at middle");
+	al_draw_textf(font, al_map_rgb(0, 0, 255), 900, 300, 0, "Timer is written in Top left corner");
 }
